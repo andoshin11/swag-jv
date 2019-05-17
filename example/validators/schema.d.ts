@@ -5,4 +5,3 @@
 export function PetValidator (data: any): boolean
 
 export function PetSeedValidator (data: any): boolean
-
