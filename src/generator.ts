@@ -60,30 +60,30 @@ export default class Generator {
     }
 
     // Render paths
-      const pathTemplatePath = path.resolve(__dirname, '../templates/paths.ejs')
-      const pathsDtsTemplatePath = path.resolve(__dirname, '../templates/paths.d.ts.ejs')
-      const pathsTemplate = fs.readFileSync(pathTemplatePath, 'utf-8')
-      const pathsDtsTemplate = fs.readFileSync(pathsDtsTemplatePath, 'utf-8')
-      const paths = Object.values(this.spec.paths).reduce((acc, ac) => {
-        for (const operation of Object.values(ac)) {
-          const { operationId } = operation as any
-          acc.push({
-            name: operationId,
-            funcName: `${operationId}Validator`
-          })
-        }
-        return acc
-      }, [] as { name: string; funcName: string; }[])
-      this.genFiles([
-        {
-          filepath: path.resolve(this.dist, 'paths.js'),
-          content: ejs.render(pathsTemplate, { paths })
-        },
-        {
-          filepath: path.resolve(this.dist, 'paths.d.ts'),
-          content: ejs.render(pathsDtsTemplate, { paths })
-        }
-      ])
+    const pathTemplatePath = path.resolve(__dirname, '../templates/paths.ejs')
+    const pathsDtsTemplatePath = path.resolve(__dirname, '../templates/paths.d.ts.ejs')
+    const pathsTemplate = fs.readFileSync(pathTemplatePath, 'utf-8')
+    const pathsDtsTemplate = fs.readFileSync(pathsDtsTemplatePath, 'utf-8')
+    const paths = Object.values(this.spec.paths).reduce((acc, ac) => {
+      for (const operation of Object.values(ac)) {
+        const { operationId } = operation as any
+        acc.push({
+          name: operationId,
+          funcName: `${operationId}OperationValidator`
+        })
+      }
+      return acc
+    }, [] as { name: string; funcName: string; }[])
+    this.genFiles([
+      {
+        filepath: path.resolve(this.dist, 'paths.js'),
+        content: ejs.render(pathsTemplate, { paths })
+      },
+      {
+        filepath: path.resolve(this.dist, 'paths.d.ts'),
+        content: ejs.render(pathsDtsTemplate, { paths })
+      }
+    ])
   }
 
   private convertToJsonSchema(spec: OpenAPIObject): JsonSchema {
