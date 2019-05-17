@@ -1,0 +1,47 @@
+{
+  "name": "swag-jv",
+  "version": "0.0.1",
+  "description": "Generate JSON validators from Open API specification.",
+  "bin": {
+    "swag-jv": "./bin/swag-jv.js"
+  },
+  "keywords": [
+    "swagger",
+    "codegen",
+    "openapi",
+    "json schema",
+    "ajv",
+    "validator"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andoshin11/swag-jv.git"
+  },
+  "author": "andoshin11 <shinglish11@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/andoshin11/swag-jv/issues"
+  },
+  "homepage": "https://github.com/andoshin11/swag-jv#readme",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "tsc"
+  },
+  "devDependencies": {
+    "@types/ejs": "^2.6.3",
+    "@types/js-yaml": "^3.12.0",
+    "@types/json-schema": "^7.0.3",
+    "@types/node": "^11.11.3",
+    "json-schema": "^0.2.3",
+    "openapi3-ts": "^1.2.0",
+    "typescript": "~3.3.3333"
+  },
+  "dependencies": {
+    "commander": "^2.19.0",
+    "ejs": "^2.6.1",
+    "js-yaml": "^3.12.2",
+    "json-schema-ref-parser": "^6.1.0",
+    "openapi-schema-to-json-schema": "^2.2.0"
+  }
+}
