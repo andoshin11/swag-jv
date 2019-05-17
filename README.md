@@ -11,6 +11,8 @@ $ yarn add swag-jv
 ```
 
 # How to use
+This command will generate validator functions for each schemas.
+
 ```sh
 $ swag-jv generate swagger.yml --dist validators
 ```
