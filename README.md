@@ -1,6 +1,9 @@
 # swag-jv [![npm version](https://badge.fury.io/js/swag-jv.svg)](https://badge.fury.io/js/swag-jv)
 A type definition generator from Open API 3.0 spec.
 
+# Requirements
+- [ajv](https://www.npmjs.com/package/ajv)
+
 # Install
 
 ```sh

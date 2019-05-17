@@ -32,8 +32,16 @@ export default class Generator {
     // Render schemas
     if (this.spec.components && this.spec.components.schemas) {
       const schemaTemplatePath = path.resolve(__dirname, '../templates/schemas.ejs')
+      const schemaDtsTemplatePath = path.resolve(__dirname, '../templates/schemas.d.ts.ejs')
       const schemaTemplate = fs.readFileSync(schemaTemplatePath, 'utf-8')
+      const schemaDtsTemplate = fs.readFileSync(schemaDtsTemplatePath, 'utf-8')
       const content = ejs.render(schemaTemplate, {
+        schemas: Object.keys(this.spec.components.schemas).map(schema => ({
+          name: schema,
+          funcName: `${schema}Validator`
+        }))
+      })
+      const dtsContent = ejs.render(schemaDtsTemplate, {
         schemas: Object.keys(this.spec.components.schemas).map(schema => ({
           name: schema,
           funcName: `${schema}Validator`
@@ -43,6 +51,10 @@ export default class Generator {
         {
           filepath: path.resolve(this.dist, 'schema.js'),
           content
+        },
+        {
+          filepath: path.resolve(this.dist, 'schema.d.ts'),
+          content: dtsContent
         }
       ])
     }
