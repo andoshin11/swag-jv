@@ -86,6 +86,22 @@ export default class Generator {
     ])
   }
 
+  async convert() {
+    // Setup dist
+    if (!fs.existsSync(this.dist)) {
+      fs.mkdirSync(this.dist)
+    }
+
+    // Need to parse $refs before passing to ajv
+    const refParsed = await dereference(this.jsonSchema) as JsonSchema
+    this.genFiles([
+      {
+        filepath: path.resolve(this.dist, 'schema.json'),
+        content: JSON.stringify(refParsed, null, '\t')
+      }
+    ])
+  }
+
   private convertToJsonSchema(spec: OpenAPIObject): JsonSchema {
 
     return toJsonSchema(spec)

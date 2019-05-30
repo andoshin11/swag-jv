@@ -30,6 +30,7 @@ Options:
 
 Commands:
   generate [options] <file>
+  convert [options] <file>
 ```
 
 # License
