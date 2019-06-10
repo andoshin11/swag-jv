@@ -2,7 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 const AJV = require('ajv')
-const ajv = new AJV({ unknownFormats: ['int32', 'float', 'int64'] })
+const ajv = new AJV({ unknownFormats: ['int32', 'float', 'int64'], nullable: true })
 const json = require('./schema.json')
 
 const operationHash = Object.values(json.paths).reduce((acc, ac) => {
