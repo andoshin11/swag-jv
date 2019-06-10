@@ -9,7 +9,7 @@ const operationHash = Object.values(json.paths).reduce((acc, ac) => {
   for (const operation of Object.values(ac)) {
     const { operationId, responses } = operation
     const targetResponse = responses['200'] || responses['201']
-    if (!targetResponse) continue
+    if (!targetResponse || !targetResponse.content) continue
 
     acc[operationId] = {
       params: {}, // TODO
