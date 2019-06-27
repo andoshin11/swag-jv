@@ -1,6 +1,6 @@
 {
   "name": "swag-jv",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Generate JSON validators from Open API specification.",
   "bin": {
     "swag-jv": "./bin/swag-jv.js"
