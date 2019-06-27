@@ -7,13 +7,14 @@ const json = require('./schema.json')
 
 const operationHash = Object.values(json.paths).reduce((acc, ac) => {
   for (const operation of Object.values(ac)) {
-    const { operationId, responses } = operation
+    const { operationId, responses, requestBody, parameters } = operation
     const targetResponse = responses['200'] || responses['201']
     if (!targetResponse || !targetResponse.content) continue
 
     acc[operationId] = {
       params: {}, // TODO
-      response: targetResponse.content['application/json'].schema
+      response: targetResponse.content['application/json'].schema,
+      requestBody: requestBody && requestBody.content['application/json'].schema
     }
   }
   return acc
@@ -24,10 +25,22 @@ function validate (schema, data) {
   if (!valid) throw new Error(ajv.errorsText())
   return valid
 }
-<% paths.forEach(({ funcName, name }) => { %>
-exports.<%= funcName %> = function (data) {
-  const operation = operationHash['<%= name %>']
+
+function validateResponse (operationId, data) {
+  const operation = operationHash[operationId]
   const response = operation ? operation.response : {}
   return validate(response, data)
+}
+
+function validateRequestBody (operationId, data) {
+  const operation = operationHash[operationId]
+  const requestBody = operation ? operation.requestBody : {}
+  return validate(requestBody, data)
+}
+
+<% paths.forEach(({ funcName, name }) => { %>
+exports.<%= funcName %> = {
+  response: data => validateResponse('<%= name %>', data),
+  requestBody: data => validateRequestBody('<%= name %>', data)
 }
 <% }); %>
