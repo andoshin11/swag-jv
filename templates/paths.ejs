@@ -11,7 +11,17 @@ const operationHash = Object.values(json.paths).reduce((acc, ac) => {
     const targetResponse = responses['200'] || responses['201']
     if (!targetResponse || !targetResponse.content) continue
 
-    function parseParameters (params = []) {
+    let requestBodySchema = {}
+    if (requestBody) {
+      if (requestBody.content['application/json']) {
+        requestBodySchema = requestBody.content['application/json'].schema
+      }
+      if (requestBody.content['application/x-www-form-urlencoded']) {
+        requestBodySchema = requestBody.content['application/x-www-form-urlencoded'].schema
+      }
+    }
+
+    function parseParameters(params = []) {
       return params.filter(param => param.in === 'query').reduce((_acc, _ac) => {
         if (_ac.required) _acc.required.push(_ac.name)
         _acc.properties[_ac.name] = _ac.schema || {}
@@ -22,7 +32,7 @@ const operationHash = Object.values(json.paths).reduce((acc, ac) => {
     acc[operationId] = {
       parameters: parseParameters(parameters),
       response: targetResponse.content['application/json'].schema,
-      requestBody: requestBody && requestBody.content['application/json'].schema
+      requestBody: requestBodySchema
     }
   }
   return acc
