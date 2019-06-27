@@ -5,6 +5,7 @@
 interface Validator {
   response: (data: any) => boolean
   requestBody: (data: any) => boolean
+  parameters: (data: any) => boolean
 }
 <% paths.forEach(({ funcName }) => { %>
 export type <%= funcName %> = Validator

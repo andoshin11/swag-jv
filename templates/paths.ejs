@@ -11,8 +11,16 @@ const operationHash = Object.values(json.paths).reduce((acc, ac) => {
     const targetResponse = responses['200'] || responses['201']
     if (!targetResponse || !targetResponse.content) continue
 
+    function parseParameters (params = []) {
+      return params.filter(param => param.in === 'query').reduce((_acc, _ac) => {
+        if (_ac.required) _acc.required.push(_ac.name)
+        _acc.properties[_ac.name] = _ac.schema || {}
+        return _acc
+      }, { "type": "object", "required": [], "properties": {} })
+    }
+
     acc[operationId] = {
-      params: {}, // TODO
+      parameters: parseParameters(parameters),
       response: targetResponse.content['application/json'].schema,
       requestBody: requestBody && requestBody.content['application/json'].schema
     }
@@ -24,6 +32,12 @@ function validate (schema, data) {
   const valid = ajv.validate(schema, data)
   if (!valid) throw new Error(ajv.errorsText())
   return valid
+}
+
+function validateParameters (operationId, data) {
+  const operation = operationHash[operationId]
+  const parameters = operation ? operation.parameters : {}
+  return validate(parameters, data)
 }
 
 function validateResponse (operationId, data) {
@@ -41,6 +55,7 @@ function validateRequestBody (operationId, data) {
 <% paths.forEach(({ funcName, name }) => { %>
 exports.<%= funcName %> = {
   response: data => validateResponse('<%= name %>', data),
-  requestBody: data => validateRequestBody('<%= name %>', data)
+  requestBody: data => validateRequestBody('<%= name %>', data),
+  parameters: data => validateParameters('<%= name %>', data)
 }
 <% }); %>
