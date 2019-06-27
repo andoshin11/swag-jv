@@ -48,6 +48,7 @@ paths:
           description: Property to sort by
         - in: query
           name: order
+          required: true
           schema:
             type: string
             enum:

@@ -2,44 +2,72 @@
 /* tslint:disable */
 /* eslint-disable */
 const AJV = require('ajv')
-const ajv = new AJV({ unknownFormats: ['int32', 'float', 'int64'] })
+const ajv = new AJV({ unknownFormats: ['int32', 'float', 'int64'], nullable: true })
 const json = require('./schema.json')
 
 const operationHash = Object.values(json.paths).reduce((acc, ac) => {
   for (const operation of Object.values(ac)) {
-    const { operationId, responses } = operation
+    const { operationId, responses, requestBody, parameters } = operation
     const targetResponse = responses['200'] || responses['201']
-    if (!targetResponse) continue
+    if (!targetResponse || !targetResponse.content) continue
+
+    function parseParameters(params = []) {
+      return params.filter(param => param.in === 'query').reduce((_acc, _ac) => {
+        if (_ac.required) _acc.required.push(_ac.name)
+        _acc.properties[_ac.name] = _ac.schema || {}
+        return _acc
+      }, { "type": "object", "required": [], "properties": {} })
+    }
 
     acc[operationId] = {
-      params: {}, // TODO
-      response: targetResponse.content['application/json'].schema
+      parameters: parseParameters(parameters),
+      response: targetResponse.content['application/json'].schema,
+      requestBody: requestBody && requestBody.content['application/json'].schema
     }
   }
   return acc
 }, {})
 
-function validate (schema, data) {
+function validate(schema, data) {
   const valid = ajv.validate(schema, data)
   if (!valid) throw new Error(ajv.errorsText())
   return valid
 }
 
-exports.GetPetsValidator = function (data) {
-  const operation = operationHash['GetPets']
+function validateParameters(operationId, data) {
+  const operation = operationHash[operationId]
+  const parameters = operation ? operation.parameters : {}
+  console.log(parameters)
+  return validate(parameters, data)
+}
+
+function validateResponse(operationId, data) {
+  const operation = operationHash[operationId]
   const response = operation ? operation.response : {}
   return validate(response, data)
 }
 
-exports.CreatePetValidator = function (data) {
-  const operation = operationHash['CreatePet']
-  const response = operation ? operation.response : {}
-  return validate(response, data)
+function validateRequestBody(operationId, data) {
+  const operation = operationHash[operationId]
+  const requestBody = operation ? operation.requestBody : {}
+  return validate(requestBody, data)
 }
 
-exports.GetPetValidator = function (data) {
-  const operation = operationHash['GetPet']
-  const response = operation ? operation.response : {}
-  return validate(response, data)
+
+exports.GetPetsOperationValidator = {
+  response: data => validateResponse('GetPets', data),
+  requestBody: data => validateRequestBody('GetPets', data),
+  parameters: data => validateParameters('GetPets', data)
 }
 
+exports.CreatePetOperationValidator = {
+  response: data => validateResponse('CreatePet', data),
+  requestBody: data => validateRequestBody('CreatePet', data),
+  parameters: data => validateParameters('CreatePet', data)
+}
+
+exports.GetPetOperationValidator = {
+  response: data => validateResponse('GetPet', data),
+  requestBody: data => validateRequestBody('GetPet', data),
+  parameters: data => validateParameters('GetPet', data)
+}

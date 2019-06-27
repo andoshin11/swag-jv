@@ -26,4 +26,4 @@ const corretResponse = {
   pets: [],
 }
 
-console.log(pathsValidators.GetPetsValidator(corretResponse))
+console.log(pathsValidators.GetPetsOperationValidator.parameters(corretResponse))

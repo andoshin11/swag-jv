@@ -2,8 +2,14 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export function GetPetsValidator (data: any): boolean
+interface Validator {
+  response: (data: any) => boolean
+  requestBody: (data: any) => boolean
+  parameters: (data: any) => boolean
+}
 
-export function CreatePetValidator (data: any): boolean
+export type GetPetsOperationValidator = Validator
 
-export function GetPetValidator (data: any): boolean
+export type CreatePetOperationValidator = Validator
+
+export type GetPetOperationValidator = Validator
