@@ -8,5 +8,5 @@ interface Validator {
   parameters: (data: any) => boolean
 }
 <% paths.forEach(({ funcName }) => { %>
-export type <%= funcName %> = Validator
+export const <%= funcName %>: Validator
 <% }); %>
