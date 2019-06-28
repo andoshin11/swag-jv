@@ -11,8 +11,13 @@ function validate (schema, data) {
   return valid
 }
 <% schemas.forEach(({ funcName, name }) => { %>
-export const <%= funcName %> = function (data) {
+const <%= funcName %> = function (data) {
   const schema = json.components.schemas['<%= name %>']
   return validate(schema, data)
 }
 <% }); %>
+module.exports = {
+<%_ schemas.forEach(({ funcName }) => { _%>
+  <%= funcName %>,
+<%_ }); _%>
+}

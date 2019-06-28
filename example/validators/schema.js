@@ -11,13 +11,17 @@ function validate (schema, data) {
   return valid
 }
 
-export const PetValidator = function (data) {
+const PetValidator = function (data) {
   const schema = json.components.schemas['Pet']
   return validate(schema, data)
 }
 
-export const PetSeedValidator = function (data) {
+const PetSeedValidator = function (data) {
   const schema = json.components.schemas['PetSeed']
   return validate(schema, data)
 }
 
+module.exports = {
+  PetValidator,
+  PetSeedValidator,
+}
