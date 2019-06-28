@@ -8,8 +8,8 @@ interface Validator {
   parameters: (data: any) => boolean
 }
 
-export type GetPetsOperationValidator = Validator
+export const GetPetsOperationValidator: Validator
 
-export type CreatePetOperationValidator = Validator
+export const CreatePetOperationValidator: Validator
 
-export type GetPetOperationValidator = Validator
+export const GetPetOperationValidator: Validator

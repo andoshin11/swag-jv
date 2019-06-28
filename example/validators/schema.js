@@ -11,12 +11,12 @@ function validate (schema, data) {
   return valid
 }
 
-exports.PetValidator = function (data) {
+export const PetValidator = function (data) {
   const schema = json.components.schemas['Pet']
   return validate(schema, data)
 }
 
-exports.PetSeedValidator = function (data) {
+export const PetSeedValidator = function (data) {
   const schema = json.components.schemas['PetSeed']
   return validate(schema, data)
 }

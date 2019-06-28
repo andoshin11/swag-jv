@@ -11,6 +11,16 @@ const operationHash = Object.values(json.paths).reduce((acc, ac) => {
     const targetResponse = responses['200'] || responses['201']
     if (!targetResponse || !targetResponse.content) continue
 
+    let requestBodySchema = {}
+    if (requestBody) {
+      if (requestBody.content['application/json']) {
+        requestBodySchema = requestBody.content['application/json'].schema
+      }
+      if (requestBody.content['application/x-www-form-urlencoded']) {
+        requestBodySchema = requestBody.content['application/x-www-form-urlencoded'].schema
+      }
+    }
+
     function parseParameters(params = []) {
       return params.filter(param => param.in === 'query').reduce((_acc, _ac) => {
         if (_ac.required) _acc.required.push(_ac.name)
@@ -22,52 +32,57 @@ const operationHash = Object.values(json.paths).reduce((acc, ac) => {
     acc[operationId] = {
       parameters: parseParameters(parameters),
       response: targetResponse.content['application/json'].schema,
-      requestBody: requestBody && requestBody.content['application/json'].schema
+      requestBody: requestBodySchema
     }
   }
   return acc
 }, {})
 
-function validate(schema, data) {
+function validate (schema, data) {
   const valid = ajv.validate(schema, data)
   if (!valid) throw new Error(ajv.errorsText())
   return valid
 }
 
-function validateParameters(operationId, data) {
+function validateParameters (operationId, data) {
   const operation = operationHash[operationId]
   const parameters = operation ? operation.parameters : {}
-  console.log(parameters)
   return validate(parameters, data)
 }
 
-function validateResponse(operationId, data) {
+function validateResponse (operationId, data) {
   const operation = operationHash[operationId]
   const response = operation ? operation.response : {}
   return validate(response, data)
 }
 
-function validateRequestBody(operationId, data) {
+function validateRequestBody (operationId, data) {
   const operation = operationHash[operationId]
   const requestBody = operation ? operation.requestBody : {}
   return validate(requestBody, data)
 }
 
 
-exports.GetPetsOperationValidator = {
+const GetPetsOperationValidator = {
   response: data => validateResponse('GetPets', data),
   requestBody: data => validateRequestBody('GetPets', data),
   parameters: data => validateParameters('GetPets', data)
 }
 
-exports.CreatePetOperationValidator = {
+const CreatePetOperationValidator = {
   response: data => validateResponse('CreatePet', data),
   requestBody: data => validateRequestBody('CreatePet', data),
   parameters: data => validateParameters('CreatePet', data)
 }
 
-exports.GetPetOperationValidator = {
+const GetPetOperationValidator = {
   response: data => validateResponse('GetPet', data),
   requestBody: data => validateRequestBody('GetPet', data),
   parameters: data => validateParameters('GetPet', data)
+}
+
+module.exports = {
+  GetPetsOperationValidator,
+  CreatePetOperationValidator,
+  GetPetOperationValidator,
 }

@@ -63,9 +63,14 @@ function validateRequestBody (operationId, data) {
 }
 
 <% paths.forEach(({ funcName, name }) => { %>
-export const <%= funcName %> = {
+const <%= funcName %> = {
   response: data => validateResponse('<%= name %>', data),
   requestBody: data => validateRequestBody('<%= name %>', data),
   parameters: data => validateParameters('<%= name %>', data)
 }
 <% }); %>
+module.exports = {
+<%_ paths.forEach(({ funcName }) => { _%>
+  <%= funcName %>,
+<%_ }); _%>
+}
